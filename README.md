@@ -1,33 +1,57 @@
-# CICIoT2023 Anomali Tespiti
+```markdown
+# 🛡️ CICIoT2023 Ağ Anomali ve Saldırı Tespiti
 
-CICIoT2023 veri seti ile XGBoost kullanarak ağ saldırısı tespiti yapan pipeline.
+Bu proje, **CICIoT2023** veri setini kullanarak ağ trafiğindeki siber saldırıları ve anomalileri tespit etmek için **XGBoost** tabanlı bir makine öğrenmesi boru hattı (pipeline) sunmaktadır. Proje hem çok sınıflı (multiclass - saldırı türünü belirleme) hem de ikili (binary - normal/saldırı) sınıflandırma yeteneklerine sahiptir.
 
-## Nasıl Çalıştırılır
+## 🚀 Kurulum ve Model Eğitimi
 
-Önce veriyi hazırla, sonra modeli eğit:
+Modelleri sıfırdan eğitmek için öncelikle ham veriyi işleyip (`parquet` formatına çevirerek), ardından eğitim betiklerini çalıştırmalısınız.
+
+### Çok Sınıflı (Multiclass) Model İçin:
 ```bash
 python prepare_data_multiclass.py
 python xgboost_multiclass_model.py
 
+```
+
+### İkili (Binary) Model İçin:
+
+```bash
 python prepare_data_binary.py
 python xgboost_binary_model.py
+
 ```
 
-Tahmin için:
+## 🎯 Tahmin ve Test İşlemleri (Inference)
+
+Ana `pipeline.py` dosyası üzerinden CSV veya PCAP formatındaki ağ trafiği verilerini test edebilirsiniz.
+
 ```bash
+# Belirli bir CSV dosyası üzerinden çok sınıflı tahmin
 python pipeline.py --csv dosya.csv --multi
-python pipeline.py --csv --multi          # otomatik test verisi üretir
+
+# Otomatik test verisi üreterek çok sınıflı tahmin
+python pipeline.py --csv --multi          
+
+# Doğrudan PCAP dosyası üzerinden ikili (binary) tahmin
 python pipeline.py --pcap dosya.pcap --binary
+
 ```
 
-## Dosyalar
+## 📂 Dosya Yapısı ve Modüller
 
-- `pipeline.py` — ana pipeline, csv veya pcap alıp tahmin yapar
-- `pcap_extractor.py` — pcap dosyasından feature çıkarır
-- `test_pcap_generator.py` — test için csv/pcap üretir
-- `prepare_data_multiclass.py` — ham veriyi parquet'e çevirir
-- `xgboost_multiclass_model.py` — modeli eğitir
+* `pipeline.py`: Canlı tahminleme işlemlerini yürüten, CSV veya PCAP formatlarını kabul eden ana boru hattı.
+* `pcap_extractor.py`: Ham PCAP (paket yakalama) dosyalarından modelin anlayabileceği özellikleri (feature) çıkaran modül.
+* `test_pcap_generator.py`: Model testleri için sentetik veya örneklenmiş CSV/PCAP verileri üreten yardımcı betik.
+* `prepare_data_multiclass.py` / `prepare_data_binary.py`: Ham veri setini modele uygun hale getirip optimize edilmiş parquet formatına dönüştüren veri ön işleme modülleri.
+* `xgboost_multiclass_model.py` / `xgboost_binary_model.py`: XGBoost algoritmalarının hiperparametre ayarları ve eğitim süreçlerini içeren modüller.
 
-## Bilinen Sorunlar
+## ⚠️ Bilinen Sorunlar ve Teknik Notlar
 
-**pcap_extractor ve test_pcap_generator tam düzgün çalışmıyor.** Veri setindeki CSV'ler CICFlowMeter çıktısı değil, kendilerinin yazdığı DPKT tabanlı scriptlerle üretilmiş ve bu scriptler açık kaynak olarak paylaşılmamış. Bu extractor bu orijinal feature değerlerini tam olarak üretemiyor. PCAP modunda bazı benign trafik yanlış sınıflandırılabiliyor. CSV moduyla veri setinden örnek çekerek test etmek daha güvenilir sonuç veriyor.
+* **Özellik Çıkarımı (Feature Extraction):** CICIoT2023 veri setindeki orijinal CSV'ler, genel kabul gören *CICFlowMeter* aracı ile değil, araştırmacıların kendi yazdığı *DPKT tabanlı özel scriptler* ile üretilmiştir. Bu scriptler açık kaynaklı olarak paylaşılmadığı için, projedeki `pcap_extractor` modülü orijinal özellikleri tam olarak üretemeyebilir.
+* **PCAP Modu Performansı:** `pcap_extractor` ve `test_pcap_generator` modülleri henüz tam stabil çalışmamaktadır. Özellik çıkarımındaki farklılıklardan dolayı, PCAP modunda çalışırken bazı *benign* (zararsız) trafik paketleri yanlış sınıflandırılabilmektedir.
+* **Öneri:** Modelin gerçek performansını test etmek için PCAP modu yerine, **CSV moduyla** (`--csv`) doğrudan veri setinden örnekler çekerek test edilmesi çok daha güvenilir sonuçlar vermektedir.
+
+```
+
+```
