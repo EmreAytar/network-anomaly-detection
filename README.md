@@ -1,4 +1,4 @@
-```markdown
+
 # 🛡️ CICIoT2023 Ağ Anomali ve Saldırı Tespiti
 
 Bu proje, **CICIoT2023** veri setini kullanarak ağ trafiğindeki siber saldırıları ve anomalileri tespit etmek için **XGBoost** tabanlı bir makine öğrenmesi boru hattı (pipeline) sunmaktadır. Proje hem çok sınıflı (multiclass - saldırı türünü belirleme) hem de ikili (binary - normal/saldırı) sınıflandırma yeteneklerine sahiptir.
@@ -52,6 +52,3 @@ python pipeline.py --pcap dosya.pcap --binary
 * **PCAP Modu Performansı:** `pcap_extractor` ve `test_pcap_generator` modülleri henüz tam stabil çalışmamaktadır. Özellik çıkarımındaki farklılıklardan dolayı, PCAP modunda çalışırken bazı *benign* (zararsız) trafik paketleri yanlış sınıflandırılabilmektedir.
 * **Öneri:** Modelin gerçek performansını test etmek için PCAP modu yerine, **CSV moduyla** (`--csv`) doğrudan veri setinden örnekler çekerek test edilmesi çok daha güvenilir sonuçlar vermektedir.
 
-```
-
-```
